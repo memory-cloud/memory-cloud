@@ -1,0 +1,91 @@
+version: "3"
+services:
+  # Nginx Load Balancer
+  loadbalancer:
+    build: ./loadbalancer
+    ports:
+     - "8080:80"
+    depends_on:
+     - "app4"
+    networks:
+     - frontend
+    restart: always
+
+  # Apps - scalable
+  app1:
+    build: ./app
+    depends_on:
+     - "setup-rs"
+     - "cache"
+    networks:
+     - frontend
+     - backend
+    restart: always
+  app2:
+    build: ./app
+    depends_on:
+     - "app1"
+    networks:
+     - frontend
+     - backend
+    restart: always
+  app3:
+    build: ./app
+    depends_on:
+     - "app2"
+    networks:
+     - frontend
+     - backend
+    restart: always
+  app4:
+    build: ./app
+    depends_on:
+     - "app3"
+    networks:
+     - frontend
+     - backend
+    restart: always
+     
+  # MongoDB Replica Set
+  mongo-rs0-1:
+    build: ./mongo-rs0-1
+    volumes:
+     - ./rs0-1/data:/data/db
+    depends_on:
+     - "mongo-rs0-2"
+     - "mongo-rs0-3"
+    networks:
+     - backend
+    restart: always
+  mongo-rs0-2:
+    image: "mongo:4.0-xenial"
+    command: --replSet rs0 --smallfiles --oplogSize 128
+    volumes:
+     - ./rs0-2/data:/data/db
+    networks:
+     - backend
+    restart: always
+  mongo-rs0-3:
+    image: "mongo:4.0-xenial"
+    command: --replSet rs0 --smallfiles --oplogSize 128
+    volumes:
+     - ./rs0-3/data:/data/db
+    networks:
+     - backend
+    restart: always
+  setup-rs:
+    build: ./setup
+    depends_on:
+     - "mongo-rs0-1"
+    networks:
+     - backend
+
+  # Redis Cache
+  cache:
+    image: redis:alpine
+    networks:
+     - backend
+     
+networks:
+  frontend:
+  backend:
