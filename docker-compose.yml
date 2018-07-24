@@ -58,7 +58,7 @@ services:
   mongo-rs0-1:
     build: ./mongo-rs0-1
     volumes:
-     - ./rs0-1/data:/data/db
+     - rs0-1:/data/db
     depends_on:
      - "mongo-rs0-2"
      - "mongo-rs0-3"
@@ -70,7 +70,7 @@ services:
     image: "mongo:4.0-xenial"
     command: --replSet rs0 --smallfiles --oplogSize 128
     volumes:
-     - ./rs0-2/data:/data/db
+     - rs0-2:/data/db
     networks:
      - backend
     restart: always
@@ -79,7 +79,7 @@ services:
     image: "mongo:4.0-xenial"
     command: --replSet rs0 --smallfiles --oplogSize 128
     volumes:
-     - ./rs0-3/data:/data/db
+     - rs0-3:/data/db
     networks:
      - backend
     restart: always
@@ -115,3 +115,8 @@ services:
 networks:
   frontend:
   backend:
+
+volumes:
+  rs0-1:
+  rs0-2:
+  rs0-3:
