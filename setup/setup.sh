@@ -8,16 +8,13 @@ setup () {
     RESULT=$?
 }
 
+sleep 7 | echo Sleeping
 echo Begin Setup
-
-if [ ! -f /data/configdb/done ]; then
+setup
+while [ $RESULT -ne 0 ]; do
+    echo An error ocurred, trying again
     setup
-    while [ $RESULT -ne 0 ]; do
-        echo An error ocurred, trying again
-        setup
-    done
-    echo Success!
-    touch /data/configdb/done
-fi
+done
+echo Success!
 
 echo End Setup
