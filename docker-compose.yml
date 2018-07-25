@@ -99,12 +99,18 @@ services:
      - backend
     mem_limit: 64mb
      
-  # adminmongo:
+  adminmongo:
+    image: "mrvautin/adminmongo"
+    networks:
+     - backend
+     - frontend    # ports:
+    #   - "1234:1234"
+
+  # acadvisor:
   #   image: "google/cadvisor"
   #   networks:
   #    - backend
   #    - frontend
-  #   mem_limit: 64mb
   #   volumes:
   #    - /:/rootfs:ro
   #    - /var/run:/var/run:rw
